@@ -51,16 +51,3 @@ def test_getting_patients():
 	response = client.get('/patient/'+str(test_ID))
 	assert response.status_code == 204
 	assert response.json() == {}
-
-#get all patients test
-def test_all():
-	global test_ID
-	response = client.get('/all')
-	assert test_ID == len(response.json())
-
-#reset list
-def test_reset():
-	response_del = client.delete('/all')
-	response_get = client.get('/all')
-	assert response_del.status_code == 200
-	assert len(response_get.json()) == 0
