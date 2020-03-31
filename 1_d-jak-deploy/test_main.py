@@ -3,6 +3,7 @@ from main import app
 import pytest 
 
 client = TestClient(app)
+client.delete('/all')
 test_ID = 0
 test_patients = dict()
 
