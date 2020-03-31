@@ -13,22 +13,20 @@ class PatientToReturn(BaseModel):
 
 
 app = FastAPI()
-patients = list()
-ID = 0
+app.counter = 0
+app.patients = list()
 
 responses = dict()
 responses[200] = JSONResponse(status_code=200, content={"message" : "OK"})
 responses[204] =  JSONResponse(status_code=204, content={})
 
 def add_patient(patient : PatientToCreate):
-	global patients, ID
-	patients[ID] = {"name" : patient.name, "surename" : patient.surename}	
-	ID += 1
+	patients[app.counter] = {"name" : patient.name, "surename" : patient.surename}	
+	app.counter += 1
 
 def find_patient(id : int):
-	global patients
-	if id in [p.id for p in patients]:
-		return patients[id] 
+	if id in [p.id for p in app.patients]:
+		return app.patients[id] 
 	else:
 		return None
 	
@@ -57,10 +55,9 @@ def method_put():
 #task 3
 @app.post('/patient')
 def create_patient(patientToCreate: PatientToCreate):
-	global ID, patients
-	patients.append(PatientToReturn(id = ID, patient = patientToCreate))
-	ID += 1
-	return patients[ID-1]
+	app.patients.append(PatientToReturn(id = app.counter, patient = patientToCreate))
+	app.counter += 1
+	return app.patients[app.counter-1]
 
 #task 4
 @app.get('/patient/{id}')
@@ -71,11 +68,10 @@ def get_patient(id: int):
 #additional functionality
 @app.delete('/all')
 def reset():
-	global patients
-	patients.clear()
+	app.patients.clear()
 	return responses[200]
 
 @app.get('/all')
 def all_patients():
-	return patients
+	return app.patients
 
