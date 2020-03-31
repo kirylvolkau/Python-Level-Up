@@ -1,7 +1,8 @@
+import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
-import json
+import csv
 
 class PatientToCreate(BaseModel):
 	name : str
@@ -11,24 +12,33 @@ class PatientToReturn(BaseModel):
 	id: int
 	patient: PatientToCreate
 
+#get patient, create patient, 
+def get_id():
+	count = 0
+	with open('storage.csv') as storage:
+		reader = csv.reader(storage)
+		count = len(list(reader))-1
+	return count
+
+def find_patient(id: int):
+	df = pd.read_csv('storage.csv')
+	patient = df[df.id == id]
+	if patient.empty:
+		return None
+	tmp = PatientToCreate(name = patient.name.item(), surename = patient.surename.item())
+	return PatientToReturn(id = id, patient = tmp)
+
+def add_patient(patient : PatientToCreate):
+	insert = [get_id(), patient.name, patient.surename]
+	with open('storage.csv', 'a+', newline='\n') as storage:
+		csv_writer = csv.writer(storage)
+		csv_writer.writerow(insert)
 
 app = FastAPI()
-app.counter = 0
-app.patients = list()
 
 responses = dict()
 responses[200] = JSONResponse(status_code=200, content={"message" : "OK"})
 responses[204] =  JSONResponse(status_code=204, content={})
-
-def add_patient(patient : PatientToCreate):
-	patients[app.counter] = {"name" : patient.name, "surename" : patient.surename}	
-	app.counter += 1
-
-def find_patient(id : int):
-	if id in [p.id for p in app.patients]:
-		return app.patients[id] 
-	else:
-		return None
 	
 #task 1 - working
 @app.get('/')
@@ -55,9 +65,8 @@ def method_put():
 #task 3
 @app.post('/patient')
 def create_patient(patientToCreate: PatientToCreate):
-	app.patients.append(PatientToReturn(id = app.counter, patient = patientToCreate))
-	app.counter += 1
-	return app.patients[app.counter-1]
+	add_patient(patientToCreate)
+	return find_patient(get_id()-1)
 
 #task 4
 @app.get('/patient/{id}')
@@ -68,10 +77,15 @@ def get_patient(id: int):
 #additional functionality
 @app.delete('/all')
 def reset():
-	app.patients.clear()
+	with open('storage.csv', 'r') as fin:
+		data = fin.read().splitlines(True)
+	with open('storage.csv', 'w') as fout:
+		fout.writelines(data[0])
 	return responses[200]
 
 @app.get('/all')
 def all_patients():
-	return app.patients
+	df = pd.read_csv('storage.csv')
+	return df.to_json()
+	
 
