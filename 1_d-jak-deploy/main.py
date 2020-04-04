@@ -30,7 +30,7 @@ def find_patient(id: int):
 
 def add_patient(patient : PatientToCreate):
 	insert = [get_id(), patient.name, patient.surename]
-	with open('storage.csv', 'a+', newline='\n') as storage:
+	with open('storage.csv', 'a+', newline='') as storage:
 		csv_writer = csv.writer(storage)
 		csv_writer.writerow(insert)
 

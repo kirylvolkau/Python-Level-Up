@@ -52,3 +52,4 @@ def test_getting_patients():
 	response = client.get('/patient/'+str(test_ID))
 	assert response.status_code == 204
 	assert response.json() == {}
+	client.delete('/all')
