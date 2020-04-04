@@ -86,6 +86,6 @@ def reset():
 @app.get('/all')
 def all_patients():
 	df = pd.read_csv('storage.csv')
-	return df.to_json()
+	return df.T.to_dict()
 	
 
