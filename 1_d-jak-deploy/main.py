@@ -76,7 +76,7 @@ def get_patient(id: int):
 	if patient:
 		return patient.patient
 	else:
-		raise HTTPException(status_code=204, detail="Patient not found")
+		return responses[200]
 
 #additional functionality
 @app.delete('/all')
