@@ -1,5 +1,5 @@
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 import csv
@@ -72,7 +72,11 @@ def create_patient(patientToCreate: PatientToCreate):
 @app.get('/patient/{id}')
 def get_patient(id: int):
 	patient = find_patient(id)
-	return patient.patient if patient else responses[204]
+	print(patient)
+	if patient:
+		return patient.patient
+	else:
+		raise HTTPException(status_code=204, detail="Patient not found")
 
 #additional functionality
 @app.delete('/all')
