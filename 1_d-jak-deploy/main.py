@@ -38,7 +38,7 @@ app = FastAPI()
 
 responses = dict()
 responses[200] = JSONResponse(status_code=200, content={"message" : "OK"})
-responses[204] =  JSONResponse(status_code=204, content={"message" : "no such patient"})
+responses[204] =  JSONResponse(status_code=204)
 	
 #task 1 - working
 @app.get('/')
