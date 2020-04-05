@@ -1,7 +1,7 @@
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 import csv
 
 class PatientToCreate(BaseModel):
@@ -38,7 +38,7 @@ app = FastAPI()
 
 responses = dict()
 responses[200] = JSONResponse(status_code=200, content={"message" : "OK"})
-responses[204] =  JSONResponse(status_code=204)
+responses[204] =  Response(status_code=204)
 	
 #task 1 - working
 @app.get('/')
