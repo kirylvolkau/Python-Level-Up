@@ -76,7 +76,7 @@ def get_patient(id: int):
 	if patient:
 		return patient.patient
 	else:
-		return responses[204]
+		return responses[200]
 
 #additional functionality
 @app.delete('/all')
