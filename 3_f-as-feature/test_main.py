@@ -1,55 +1,32 @@
-from fastapi.testclient import TestClient
-from main import app
 import pytest 
+from main import app
+from basicauth import encode, decode
+from fastapi.testclient import TestClient
+
 
 client = TestClient(app)
-client.delete('/all')
-test_ID = 0
-test_patients = dict()
+client.login_hash = encode('trudnY','PaC13Nt')
 
-#task 1 test
 def test_root():
 	reponse = client.get('/')
 	assert reponse.status_code == 200
 	assert reponse.json() == {'message': 'Hello World during the coronavirus pandemic!'}
 
-#task 2 test
-@pytest.mark.parametrize('method', ["GET","POST","DELETE","PUT"])
-def test_method(method):
-	if method == "GET":
-		response = client.get('/method')
-	if method == "PUT":
-		response = client.put('/method')
-	if method == "DELETE":
-		response = client.delete('/method')
-	if method == "POST":
-		response = client.post('/method')
+def test_welcome():
+	response = client.get('/welcome')
 	assert response.status_code == 200
-	assert response.json() == {"method" :  method}
+	assert response.json() == {'message': 'Hello World during the coronavirus pandemic!'}
 
-#task 3 test
-@pytest.mark.parametrize('patientToCreate', [
-	{'name' : 'Frank', 'surename' : 'Underwood'},
-	{'name' : 'Grzegorzł', 'surename' : 'Brzęczyszczykiewićż'},
-	{'name' : 'Кирилл', 'surename' : 'Волков'},
-])
-def test_patient_creation(patientToCreate):
-	global test_ID, test_patients
-	response = client.post('/patient', json = patientToCreate)
+def test_bad_login():
+	request = {"login":"no","password":"no"}
+	response = client.post('/login/',json=request)
+	assert response.status_code==401
+
+def test_correct_login():
+	request = {'login':'trudnY','password':'PaC13Nt'}
+	response = client.post(url='/login/', json=request)
 	assert response.status_code == 200
-	assert response.json() == {'id' : test_ID, 'patient' : patientToCreate}
-	test_patients[test_ID] = patientToCreate
-	test_ID += 1
+	assert response.cookies.get('session_token') == f'"{client.login_hash}"'
 
-#task 4 test
-def test_getting_patients():
-	global test_ID, test_patients
-	for id in range(test_ID-1):
-		response = client.get('/patient/'+str(id))
-		assert response.status_code == 200
-		assert response.json() == test_patients[id]
 
-	response = client.get('/patient/'+str(test_ID))
-	assert response.status_code == 204
-	#assert response.json() == {}
-	client.delete('/all')
+
