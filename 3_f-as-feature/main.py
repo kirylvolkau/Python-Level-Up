@@ -4,12 +4,6 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse, Response
 import csv
 
-#just to fix pytest
-import os
-THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-my_file = os.path.join(THIS_FOLDER, 'storage.csv')
-
-
 class PatientToCreate(BaseModel):
 	name : str
 	surename : str #mistake in the task.
@@ -35,8 +29,8 @@ def find_patient(id: int):
 	return PatientToReturn(id = id, patient = tmp)
 
 def add_patient(patient : PatientToCreate):
-	insert = [get_id(), patient.name, patient.surename]
-	with open('storage.csv', 'a+', newline='') as storage:
+	insert = [get_id(),patient.name,patient.surename]
+	with open('storage.csv', 'a+',newline='\n') as storage:
 		csv_writer = csv.writer(storage)
 		csv_writer.writerow(insert)
 
@@ -88,7 +82,7 @@ def get_patient(id: int):
 #additional functionality
 @app.delete('/all')
 def reset():
-	with open(my_file, 'r') as fin:
+	with open('storage.csv', 'r') as fin:
 		data = fin.read().splitlines(True)
 	with open('storage.csv', 'w') as fout:
 		fout.writelines(data[0])
