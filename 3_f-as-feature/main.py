@@ -2,6 +2,7 @@ from basicauth import encode, decode
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, status, Response
 from fastapi.responses import JSONResponse
+from starlette.responses import RedirectResponse
 
 
 class UserLogin(BaseModel):
@@ -20,8 +21,9 @@ def root():
 @app.post('/login/')
 def login_user(request_model : UserLogin,response : Response, status_code=status.HTTP_200_OK):
 	user_hash = encode(request_model.login,request_model.password)
-	if app.allowed_user_hash == user_hash:
-		response.set_cookie(key='session_token', value=user_hash)
-	else:
+	if app.allowed_user_hash != user_hash:
 		raise HTTPException(401)
+	response = RedirectResponse( url='/welcome', status_code=status.HTTP_200_OK)
+	response.set_cookie(key="session_token", value=user_hash)
+	return response
 

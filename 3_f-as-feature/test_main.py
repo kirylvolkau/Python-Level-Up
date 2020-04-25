@@ -22,11 +22,11 @@ def test_bad_login():
 	response = client.post('/login/',json=request)
 	assert response.status_code==401
 
-def test_correct_login():
-	request = {'login':'trudnY','password':'PaC13Nt'}
-	response = client.post(url='/login/', json=request)
-	assert response.status_code == 200
-	assert response.cookies.get('session_token') == f'"{client.login_hash}"'
+# def test_correct_login():
+# 	request = {'login':'trudnY','password':'PaC13Nt'}
+# 	response = client.post(url='/login/', json=request)
+# 	assert response.status_code == 200
+# 	assert response.cookies.get('session_token') == f'"{client.login_hash}"'
 
 
 
