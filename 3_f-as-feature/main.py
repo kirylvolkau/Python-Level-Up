@@ -4,6 +4,12 @@ from pydantic import BaseModel
 from fastapi.responses import JSONResponse, Response
 import csv
 
+#just to fix pytest
+import os
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+my_file = os.path.join(THIS_FOLDER, 'storage.csv')
+
+
 class PatientToCreate(BaseModel):
 	name : str
 	surename : str #mistake in the task.
@@ -15,14 +21,13 @@ class PatientToReturn(BaseModel):
 #get patient, create patient, 
 def get_id():
 	count = 0
-	with open('./storage.csv') as storage:
+	with open('storage.csv') as storage:
 		reader = csv.reader(storage)
 		count = len(list(reader))-1
-		del reader
 	return count
 
 def find_patient(id: int):
-	df = pd.read_csv('./storage.csv')
+	df = pd.read_csv('storage.csv')
 	patient = df[df.id == id]
 	if patient.empty:
 		return None
@@ -31,10 +36,9 @@ def find_patient(id: int):
 
 def add_patient(patient : PatientToCreate):
 	insert = [get_id(), patient.name, patient.surename]
-	with open('./storage.csv', 'a+', newline='') as storage:
+	with open('storage.csv', 'a+', newline='') as storage:
 		csv_writer = csv.writer(storage)
 		csv_writer.writerow(insert)
-		del csv_writer
 
 app = FastAPI()
 
@@ -84,9 +88,9 @@ def get_patient(id: int):
 #additional functionality
 @app.delete('/all')
 def reset():
-	with open('./storage.csv', 'r') as fin:
+	with open(my_file, 'r') as fin:
 		data = fin.read().splitlines(True)
-	with open('./storage.csv', 'w') as fout:
+	with open('storage.csv', 'w') as fout:
 		fout.writelines(data[0])
 	return responses[200]
 
