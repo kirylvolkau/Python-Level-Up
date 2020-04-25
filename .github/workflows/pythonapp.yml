@@ -27,5 +27,5 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        cd 1_d-jak-deploy
+        cd 1_d-as-deploy
         pytest
