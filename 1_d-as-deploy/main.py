@@ -81,9 +81,9 @@ def get_patient(id: int):
 #additional functionality
 @app.delete('/all')
 def reset():
-	with open('./storage.csv', 'r') as fin:
+	with open('storage.csv', 'r') as fin:
 		data = fin.read().splitlines(True)
-	with open('./storage.csv', 'w') as fout:
+	with open('storage.csv', 'w') as fout:
 		fout.writelines(data[0])
 	return responses[200]
 
