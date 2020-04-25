@@ -22,8 +22,8 @@ def root():
 def login_user(request_model : UserLogin,response : Response, status_code=status.HTTP_200_OK):
 	user_hash = encode(request_model.login,request_model.password)
 	if app.allowed_user_hash != user_hash:
-		raise HTTPException(401)
-	response = RedirectResponse( url='/welcome', status_code=status.HTTP_200_OK)
+		raise HTTPException(status_code=401,detail='Login failed.')
+	response = RedirectResponse( url='/welcome', status_code=status.HTTP_302_FOUND)
 	response.set_cookie(key="session_token", value=user_hash)
 	return response
 
