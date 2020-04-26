@@ -38,6 +38,7 @@ def lel(credentials : HTTPBasicCredentials = Depends(security)):
 	if credentials.username == "trudnY" and credentials.password == "PaC13Nt":
 		response = RedirectResponse(url='/welcome')
 		s_token = sha256(bytes(f"{credentials.username}{credentials.password}{app.secret}", encoding='utf8')).hexdigest()
+		response.set_cookie(key="session_token",value=s_token)
 		return response
 	else:
 		raise HTTPException(status_code=500)
