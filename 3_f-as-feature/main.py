@@ -41,4 +41,4 @@ def lel(credentials : HTTPBasicCredentials = Depends(security)):
 		response.set_cookie(key="session_token",value=s_token)
 		return response
 	else:
-		raise HTTPException(status_code=500)
+		raise HTTPException(status_code=401, detail="Bad login/password.")
