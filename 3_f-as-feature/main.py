@@ -1,7 +1,7 @@
 from functools import wraps
 from hashlib import sha256
 from fastapi import FastAPI, HTTPException, status, Response, Cookie, Request, Depends
-from starlette.responses import RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 def is_logged_in(f):
@@ -47,10 +47,9 @@ def user_login(credentials : HTTPBasicCredentials = Depends(security)):
 
 @app.post('/logout/')
 @is_logged_in
-def user_logout(request: Request):
-	response = Response(
-		headers={"Location":'/'},
-	)
+def user_logout(request: Request, response : Response):
+	response.headers['Location'] = '/'
 	response.delete_cookie(key="session_token",path='/')
+	response.status_code = 302
 	return response
 	
