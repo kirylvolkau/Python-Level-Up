@@ -29,7 +29,7 @@ def root():
 @app.get('/welcome/')
 @is_logged_in
 def welcome(request: Request, session_token: str = Cookie(None)):
-	return {"msg": "Hello World during the coronavirus pandemic!"}
+	return {"message": "Hello World during the coronavirus pandemic!"}
 
 
 @app.post('/login')
