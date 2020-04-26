@@ -34,7 +34,7 @@ def welcome(request: Request, session_token: str = Cookie(None)):
 
 
 @app.post('/login')
-def lel(credentials : HTTPBasicCredentials = Depends(security)):
+def user_login(credentials : HTTPBasicCredentials = Depends(security)):
 	if credentials.username == "trudnY" and credentials.password == "PaC13Nt":
 		response = RedirectResponse(url='/welcome')
 		s_token = sha256(bytes(f"{credentials.username}{credentials.password}{app.secret}", encoding='utf8')).hexdigest()
@@ -42,3 +42,11 @@ def lel(credentials : HTTPBasicCredentials = Depends(security)):
 		return response
 	else:
 		raise HTTPException(status_code=401, detail="Bad login/password.")
+
+@app.post('/logout/')
+@is_logged_in
+def user_logout(response : Response):
+	response = RedirectResponse(url='/')
+	response.delete_cookie(key="session_token",path='/')
+	return response
+	
