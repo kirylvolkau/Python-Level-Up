@@ -46,7 +46,7 @@ def user_login(credentials : HTTPBasicCredentials = Depends(security)):
 @app.post('/logout/')
 @is_logged_in
 def user_logout(response : Response):
-	response = RedirectResponse(url='/')
+	RedirectResponse(url='/')
 	response.delete_cookie(key="session_token",path='/')
 	response.headers['Location'] = '/'
 	return response

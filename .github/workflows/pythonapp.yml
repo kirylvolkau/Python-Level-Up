@@ -27,7 +27,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pip install numpy
-        pip install pandas
         cd 3_f-as-feature
-        pytest
