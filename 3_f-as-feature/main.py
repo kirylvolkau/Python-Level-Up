@@ -22,7 +22,7 @@ def get_id():
 	count = 0
 	with open('storage.csv') as storage:
 		reader = csv.reader(storage)
-		count = len(list(reader))-1
+		count = len(list(reader))
 	return count
 
 def find_patient(id: int):
@@ -131,7 +131,5 @@ def delete_patient(id:int, request : Request):
 		df = df[df.id != id]
 		reset()
 		df.to_csv('storage.csv', index=False)
-		return responses[200]
-	else:
-		return responses[204]
+	return responses[204]
 
