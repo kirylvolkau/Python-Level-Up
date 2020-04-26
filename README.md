@@ -11,4 +11,7 @@ The trickiest part was to understand, that `uviciorn` for optimization purposes 
 Those tasks were about understanding idea of decorators in python and creating decorators, similar to which we will use later in our web-app. 
 <br>
 ## Part 3 : F as "Feature"
-To be updated.
+- added BasicAuth.
+- added `login` and `logout` endpoints (method : `POST`).
+- added templates : Jinja2Templates.
+- added decorator `is_logged_in` checking, if request contains cookie "session_token".

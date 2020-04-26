@@ -4,3 +4,4 @@ __pycache__/
 .vscode
 .vs
 virt/
+.ipynb_checkpoints
