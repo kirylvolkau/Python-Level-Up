@@ -48,5 +48,6 @@ def user_login(credentials : HTTPBasicCredentials = Depends(security)):
 def user_logout(response : Response):
 	response = RedirectResponse(url='/')
 	response.delete_cookie(key="session_token",path='/')
+	response.headers['Location'] = '/'
 	return response
 	
