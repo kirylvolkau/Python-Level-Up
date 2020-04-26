@@ -2,6 +2,7 @@ from hashlib import sha256
 from functools import wraps
 from fastapi import FastAPI, HTTPException, Response, Cookie, Depends, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.templating import Jinja2Templates
 
 
 def is_logged_in(func):
@@ -22,6 +23,8 @@ PASS = 'PaC13Nt'
 app = FastAPI()
 app.secret_key = 'Mizt14O3sE3AWCviiIkUuwqURvGEf2Tn'
 app.allowed_user_hash = sha256(bytes(f"{LOGIN}{PASS}{app.secret_key}",encoding='utf8')).hexdigest()
+templates = Jinja2Templates(directory="templates")
+
 
 @app.get("/")
 def root():
@@ -30,7 +33,7 @@ def root():
 @app.get("/welcome")
 @is_logged_in
 def welcome(request : Request):
-	return {"message": "Hello World during the coronavirus pandemic!"}
+	return templates.TemplateResponse(name="greetings.html",context={"request":request,"user" : LOGIN})
 
 @app.post('/login')
 def login(response: Response, credentials: HTTPBasicCredentials = Depends(HTTPBasic())):
