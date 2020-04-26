@@ -131,5 +131,7 @@ def delete_patient(id:int, request : Request):
 		df = df[df.id != id]
 		reset()
 		df.to_csv('storage.csv', index=False)
-	return responses[200]
+		return responses[200]
+	else:
+		return responses[204]
 
