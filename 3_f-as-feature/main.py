@@ -39,14 +39,17 @@ def user_login(credentials : HTTPBasicCredentials = Depends(security)):
 		response = RedirectResponse(url='/welcome')
 		s_token = sha256(bytes(f"{credentials.username}{credentials.password}{app.secret}", encoding='utf8')).hexdigest()
 		response.set_cookie(key="session_token",value=s_token)
+		response.status_code = 302
+		response.headers['Location']='/welcome'
 		return response
 	else:
 		raise HTTPException(status_code=401, detail="Bad login/password.")
 
 @app.post('/logout/')
 @is_logged_in
-def user_logout():
+def user_logout(request: Request):
 	response = RedirectResponse(url='/')
+	response.status_code = 302
 	response.delete_cookie(key="session_token",path='/')
 	response.headers['Location'] = '/'
 	return response
