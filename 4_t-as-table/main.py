@@ -9,8 +9,8 @@ class Composer(BaseModel):
 	name: str
 
 class Page(BaseModel):
-	page: int = 0
-	per_page: int = 10
+	page: int
+	per_page: int
 
 @app.on_event('startup')
 async def startup():
@@ -21,9 +21,11 @@ async def shutdown():
 	await app.db_connection.close()
 
 @app.get('/tracks/')
-async def get_tracks_page(page: Page):
+async def get_tracks_page(page: Page = None):
+	limit = 10 if page==None else page.per_page
+	offset = 0 if page==None else page.page*page.per_page
 	app.db_connection.row_factory = sqlite3.Row
-	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {page.per_page} OFFSET {page.per_page*page.page}")
+	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {limit} OFFSET {offset}")
 	tracks = await cursor.fetchall()
 	return tracks
 
