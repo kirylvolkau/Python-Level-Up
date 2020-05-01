@@ -2,6 +2,7 @@ import sqlite3
 import aiosqlite
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -25,7 +26,7 @@ async def get_tracks_page(page: Page = None):
 	app.db_connection.row_factory = sqlite3.Row
 	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {page.per_page} OFFSET {page.page*page.per_page}")
 	tracks = await cursor.fetchall()
-	return tracks
+	return JSONResponse(content=tracks, status_code=200)
 
 @app.get('/tracks/composers/')
 async def get_tracks_of_composer(composer : Composer):
@@ -33,4 +34,4 @@ async def get_tracks_of_composer(composer : Composer):
 	tracks = await cursor.fetchall()
 	if(len(tracks) == 0):
 		raise HTTPException(status_code=404,detail="Composer was not found.")
-	return tracks
+	return JSONResponse(content=tracks, status_code=200)
