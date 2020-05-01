@@ -29,7 +29,7 @@ async def get_tracks_page(page: Page = None):
 
 @app.get('/tracks/composers/')
 async def get_tracks_of_composer(composer : Composer):
-	cursor = await app.db_connection.execute(f"SELECT Name FROM tracks WHERE Composer = '{composer.composer_name}'")
+	cursor = await app.db_connection.execute(f"SELECT Name FROM tracks WHERE Composer = '{composer.composer_name}' ORDER BY Name ASC")
 	tracks = await cursor.fetchall()
 	if(len(tracks) == 0):
 		raise HTTPException(status_code=404,detail="Composer was not found.")
