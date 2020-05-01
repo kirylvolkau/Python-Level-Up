@@ -10,7 +10,7 @@ import csv
 import pandas as pd
 
 class PatientToCreate(BaseModel):
-	name : str
+	name : str 
 	surname : str 
 
 class PatientToReturn(BaseModel):
