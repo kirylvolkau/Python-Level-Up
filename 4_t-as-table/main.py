@@ -1,24 +1,16 @@
 import sqlite3
 import aiosqlite
-from fastapi import FastAPI
 from pydantic import BaseModel
-
-class PageRequest(BaseModel):
-	page: int = None
-	per_page: int = None
-
-class TrackResponse(BaseModel):
-	TrackId: int
-	Name : str
-	AlbumId : int
-	MediaTypeId : int
-	GenreId : int
-	Composed: str
-	Milliseconds : int
-	Bytes : int
-	UnitPrice : float
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
+
+class Composer(BaseModel):
+	name: str
+
+class Page(BaseModel):
+	page: int = 0
+	per_page: int = 10
 
 @app.on_event('startup')
 async def startup():
@@ -28,9 +20,17 @@ async def startup():
 async def shutdown():
 	await app.db_connection.close()
 
-@app.get('/tracks')
-async def get_tracks_page(page: int = 0, per_page: int = 10):
+@app.get('/tracks/')
+async def get_tracks_page(page: Page):
 	app.db_connection.row_factory = sqlite3.Row
-	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {per_page} OFFSET {per_page*page}")
+	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {page.per_page} OFFSET {page.per_page*page.page}")
 	tracks = await cursor.fetchall()
+	return tracks
+
+@app.get('/tracks/composers/')
+async def get_tracks_of_composer(composer : Composer):
+	cursor = await app.db_connection.execute(f"SELECT Name FROM tracks WHERE Composer = '{composer.name}'")
+	tracks = await cursor.fetchall()
+	if(len(tracks) == 0):
+		raise HTTPException(status_code=404,detail="Composer was not found.")
 	return tracks

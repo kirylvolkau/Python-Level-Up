@@ -8,5 +8,5 @@ with sqlite3.connect('chinook.db') as connection:
 
 with sqlite3.connect('chinook.db') as connection:
 	cursor =  connection.cursor()
-	tracks = cursor.execute(f"SELECT TrackId FROM tracks LIMIT 10 OFFSET ").fetchall()
+	tracks = cursor.execute(f"SELECT TrackId FROM tracks LIMIT 10 OFFSET 5").fetchall()
 	print(tracks)
