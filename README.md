@@ -15,3 +15,8 @@ Those tasks were about understanding idea of decorators in python and creating d
 - added `login` and `logout` endpoints (method : `POST`).
 - added templates : Jinja2Templates.
 - added decorator `is_logged_in` checking, if request contains cookie "session_token".
+## Part 4 : T as "Table"
+- created new `fastapi` client
+- added example "chinook" `SQLite` database
+- connected to it using `sqlite3` module
+- performed `Create`, `Read`, `Update` operations on it  
