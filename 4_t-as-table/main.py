@@ -115,10 +115,15 @@ def get_category_statistics(category: str):
 			'GROUP BY c.customerid '+
 			'ORDER BY Sum DESC, c.customerid'
 		).fetchall()
+	elif category == "genres":
+		statistics = app.db_connection.execute(
+			'SELECT genre.name, SUM(items.quantity) AS Sum '+
+			'FROM genres AS genre '+
+			'JOIN tracks AS tracks ON tracks.genreid = genre.genreid '+
+			'JOIN invoice_items AS items ON items.trackid = tracks.trackid '+
+			'GROUP BY genre.name '+
+			'ORDER BY Sum DESC, genre.name'
+		).fetchall()
 	else:
 		raise NotFoundException("category")
 	return statistics
-
-
-
-
