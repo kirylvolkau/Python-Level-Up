@@ -93,7 +93,7 @@ def get_album(album_id : int):
 		raise NotFoundException("album")
 	return album
 
-@app.post('/customers/{customer_id}')
+@app.put('/customers/{customer_id}')
 @customer_exists
 def get_customer(customer_id:int, customer:CustomerToChange):
 	app.db_connection.row_factory = sqlite3.Row
