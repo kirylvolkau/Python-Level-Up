@@ -28,7 +28,7 @@ def artist_exists(func):
 	def wrapper(*args,**kwargs):
 		album = kwargs['album']
 		artist = app.db_connection.execute(f'SELECT name FROM artists WHERE artistid = "{album.artist_id}"').fetchone()
-		if(len(artist)==0):
+		if not artist:
 			raise NotFoundException("artist")
 		else:
 			return func(*args, **kwargs)
@@ -39,7 +39,7 @@ def customer_exists(func):
 	def wrapper(*args,**kwargs):
 		id = kwargs['customer_id']
 		customer = app.db_connection.execute(f'SELECT firstname FROM customers WHERE customerid = "{id}"').fetchone()
-		if(len(customer)==0):
+		if not customer:
 			raise NotFoundException("customer")
 		else:
 			return func(*args, **kwargs)
