@@ -28,7 +28,7 @@ def artist_exists(func):
 def get_album_by_id(id : int):
 	app.db_connection.row_factory = sqlite3.Row
 	album = app.db_connection.execute(f'SELECT * FROM albums WHERE albumid="{id}"').fetchall()
-	return album
+	return album[0]
 
 app = FastAPI()
 
@@ -54,7 +54,7 @@ def get_composer_by_name(composer_name:str):
 		raise NotFoundException("composer")
 	return tracks
 
-@app.post('/albums/')
+@app.post('/albums/', status_code=201)
 @artist_exists
 def create_new_album(album: Album):
 	app.db_connection.row_factory = lambda cursor,row: row[0]
