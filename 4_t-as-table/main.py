@@ -104,5 +104,20 @@ def get_customer(customer_id:int, customer:CustomerToChange):
 	app.db_connection.commit()
 	return cursor.execute(f'SELECT * FROM customers WHERE customerid = {customer_id}').fetchone()
 
+@app.get('/sales/')
+def get_category_statistics(category: str):
+	app.db_connection.row_factory = sqlite3.Row
+	if category == "customers":
+		statistics = app.db_connection.execute(
+			'SELECT c.customerid, c.email, c.phone, ROUND(SUM(invoices.Total),2) as Sum '+
+			'FROM customers AS c '+
+			'JOIN invoices ON invoices.customerid = c.customerid '+
+			'GROUP BY c.customerid '
+		).fetchall()
+	else:
+		raise NotFoundException("category")
+	return statistics
+
+
 
 
