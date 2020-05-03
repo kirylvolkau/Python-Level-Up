@@ -45,7 +45,6 @@ def customer_exists(func):
 			return func(*args, **kwargs)
 	return wrapper
 
-
 def get_album_by_id(id : int):
 	app.db_connection.row_factory = sqlite3.Row
 	album = app.db_connection.execute(f'SELECT * FROM albums WHERE albumid="{id}"').fetchone()
