@@ -1,37 +1,27 @@
 import sqlite3
-import aiosqlite
-from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-class Composer(BaseModel):
-	composer_name: str
-
-class Page(BaseModel):
-	page: int = 0
-	per_page: int = 10
-
 @app.on_event('startup')
-async def startup():
-	app.db_connection = await aiosqlite.connect('chinook.db')
+def startup():
+	app.db_connection = sqlite3.connect('chinook.db', check_same_thread=False)
 
 @app.on_event('shutdown')
-async def shutdown():
-	await app.db_connection.close()
+def shutdown():
+	app.db_connection.close()
 
 @app.get('/tracks/')
-async def get_tracks_page(page: Page = None):
+def get_tracks_page(page:int = 0, per_page:int = 10):
 	app.db_connection.row_factory = sqlite3.Row
-	cursor = await app.db_connection.execute(f"SELECT * FROM tracks LIMIT {page.per_page} OFFSET {page.page*page.per_page}")
-	tracks = await cursor.fetchall()
-	return JSONResponse(content=tracks, status_code=200)
+	tracks = app.db_connection.execute(f'SELECT * FROM tracks LIMIT {per_page} OFFSET {page*per_page}').fetchall()
+	return tracks
 
 @app.get('/tracks/composers/')
-async def get_tracks_of_composer(composer : Composer):
-	cursor = await app.db_connection.execute(f"SELECT Name FROM tracks WHERE Composer = '{composer.composer_name}' ORDER BY Name ASC")
-	tracks = await cursor.fetchall()
-	if(len(tracks) == 0):
-		raise HTTPException(status_code=404,detail="Composer was not found.")
-	return JSONResponse(content=tracks, status_code=200)
+def get_composer_by_name(composer_name:str):
+	app.db_connection.row_factory = lambda c,x: x[0]
+	tracks = app.db_connection.execute(f'SELECT name FROM tracks WHERE composer = "{composer_name}" ORDER BY name').fetchall()
+	if len(tracks)==0:
+		raise HTTPException(404, detail="No such composer.")
+	else:
+		return tracks
