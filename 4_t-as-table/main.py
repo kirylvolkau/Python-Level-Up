@@ -9,6 +9,15 @@ class Album(BaseModel):
 	title: str
 	artist_id: int
 
+class CustomerToChange(BaseModel):
+	company: str = None
+	address: str = None
+	city: str = None
+	state: str = None
+	country: str = None
+	postalcode: str = None
+	fax: str = None
+
 class NotFoundException(HTTPException):
 	def __init__(self, who : str):
 		super().__init__(status_code=404)
@@ -18,17 +27,29 @@ def artist_exists(func):
 	@wraps(func)
 	def wrapper(*args,**kwargs):
 		album = kwargs['album']
-		artist = app.db_connection.execute(f'SELECT name FROM artists WHERE artistid = "{album.artist_id}"').fetchall()
+		artist = app.db_connection.execute(f'SELECT name FROM artists WHERE artistid = "{album.artist_id}"').fetchone()
 		if(len(artist)==0):
 			raise NotFoundException("artist")
 		else:
 			return func(*args, **kwargs)
 	return wrapper
 
+def customer_exists(func):
+	@wraps(func)
+	def wrapper(*args,**kwargs):
+		id = kwargs['customer_id']
+		customer = app.db_connection.execute(f'SELECT firstname FROM customers WHERE customerid = "{id}"').fetchone()
+		if(len(customer)==0):
+			raise NotFoundException("customer")
+		else:
+			return func(*args, **kwargs)
+	return wrapper
+
+
 def get_album_by_id(id : int):
 	app.db_connection.row_factory = sqlite3.Row
-	album = app.db_connection.execute(f'SELECT * FROM albums WHERE albumid="{id}"').fetchall()
-	return album[0]
+	album = app.db_connection.execute(f'SELECT * FROM albums WHERE albumid="{id}"').fetchone()
+	return album
 
 app = FastAPI()
 
@@ -71,6 +92,18 @@ def get_album(album_id : int):
 	if len(album)==0:
 		raise NotFoundException("album")
 	return album
+
+@app.post('/customers/{customer_id}')
+@customer_exists
+def get_customer(customer_id:int, customer:CustomerToChange):
+	app.db_connection.row_factory = sqlite3.Row
+	cursor = app.db_connection.cursor()
+	tmp = customer.dict()
+	for key in tmp:
+		if tmp[key]:
+			cursor.execute(f'UPDATE customers SET {key} = "{tmp[key]}" WHERE customerid = {customer_id}')
+	app.db_connection.commit()
+	return cursor.execute(f'SELECT * FROM customers WHERE customerid = {customer_id}').fetchone()
 
 
 
