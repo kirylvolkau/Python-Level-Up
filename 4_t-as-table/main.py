@@ -112,7 +112,8 @@ def get_category_statistics(category: str):
 			'SELECT c.customerid, c.email, c.phone, ROUND(SUM(invoices.Total),2) as Sum '+
 			'FROM customers AS c '+
 			'JOIN invoices ON invoices.customerid = c.customerid '+
-			'GROUP BY c.customerid '
+			'GROUP BY c.customerid '+
+			'ORDER BY Sum DESC, c.customerid'
 		).fetchall()
 	else:
 		raise NotFoundException("category")
