@@ -22,6 +22,6 @@ def get_composer_by_name(composer_name:str):
 	app.db_connection.row_factory = lambda c,x: x[0]
 	tracks = app.db_connection.execute(f'SELECT name FROM tracks WHERE composer = "{composer_name}" ORDER BY name').fetchall()
 	if len(tracks)==0:
-		raise HTTPException(404, detail="No such composer.")
+		raise HTTPException(404, detail={"error" :"Not found"})
 	else:
 		return tracks
