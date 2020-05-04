@@ -1,5 +1,5 @@
 ![Python application](https://github.com/kirylvolkau/Python-Level-Up/workflows/Python%20application/badge.svg)
-- Project link : https://daftcode-kvolkau.herokuapp.com
+- Project link : https://daftcode-kvolkau.herokuapp.com/docs#/
 - Course repo link : https://github.com/daftcode/daftacademy-python_levelup-spring2020
 - [Recruitment folder](/0_recruitment) : recruitment task on dynamic programming.
 
